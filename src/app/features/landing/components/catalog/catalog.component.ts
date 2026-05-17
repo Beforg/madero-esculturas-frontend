@@ -53,7 +53,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
     { key: 'bovino', label: 'Bovinos', type: TipoEscultura.Bovino },
     { key: 'equino', label: 'Equinos', type: TipoEscultura.Equino },
     { key: 'ovino', label: 'Ovinos', type: TipoEscultura.Ovino },
-    { key: 'outros', label: 'Outros', type: TipoEscultura.Outros }
+    { key: 'outros', label: 'Silvestres e Outros', type: TipoEscultura.Outros }
   ];
 
   public ngOnInit(): void {
