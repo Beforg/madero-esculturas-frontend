@@ -33,9 +33,9 @@
 
   <div class="card__body">
     <p class="card__eyebrow">REF: {{ product.reference }}</p>
-    <!-- <h3 class="card__title">{{ product.description || ('REF: ' + product.reference) }}</h3> -->
+    <h3 class="card__title">{{ product.description || ('REF: ' + product.reference) }}</h3>
     <div class="card__price">
-      <!-- <span class="card__price-value">{{ product.price | currency:'BRL':'symbol':'1.2-2' }}</span> -->
+      <span class="card__price-value">{{ product.price | currency:'BRL':'symbol':'1.2-2' }}</span>
       <!-- <span class="card__price-suffix">no pix</span> -->
     </div>
     <button class="card__button" type="button" (click)="onAddToCart($event)">

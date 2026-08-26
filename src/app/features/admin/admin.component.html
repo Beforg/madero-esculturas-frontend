@@ -1,0 +1,112 @@
+<main class="admin-page">
+  <header class="admin-topbar">
+    <a class="brand" routerLink="/" aria-label="Voltar para a página inicial">
+      <span class="brand-mark"><img src="logo.png" alt="" /></span>
+      <span>Madero Esculturas</span>
+    </a>
+    <button class="back-button" type="button" (click)="goToLanding()">
+      <span aria-hidden="true">←</span> Voltar ao catálogo
+    </button>
+  </header>
+
+  <div class="admin-shell">
+    <section class="admin-intro">
+      <p class="eyebrow">Painel de Gerenciamento</p>
+      <h1>Obras do catálogo</h1>
+      <p>Adicione novas esculturas ou altere as informações das peças já publicadas.</p>
+    </section>
+
+    <div class="admin-layout">
+      <section class="form-panel">
+        <div class="panel-heading">
+          <span class="panel-number">01</span>
+          <div>
+            <p class="eyebrow">Nova peça</p>
+            <h2>Adicionar escultura</h2>
+          </div>
+        </div>
+
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <label>Referência
+            <input type="text" formControlName="reference" placeholder="Ex.: Gado Nelore" />
+          </label>
+          <div class="form-row">
+            <label>Preço (R$)
+              <input type="number" formControlName="price" min="0" step="0.01" />
+            </label>
+            <label>Categoria
+              <select formControlName="type">
+                <option *ngFor="let tipo of tiposEscultura" [value]="tipo">{{ tipo }}</option>
+              </select>
+            </label>
+          </div>
+          <label>Descrição
+            <textarea formControlName="description" rows="4" placeholder="Conte um pouco sobre esta peça..."></textarea>
+          </label>
+          <label class="file-field">Imagem da escultura
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+            <span class="file-drop"><strong>Escolher imagem</strong><small>{{ selectedFile?.name || 'JPG, PNG ou WEBP' }}</small></span>
+          </label>
+          <button class="primary-button" type="submit" [disabled]="loading">
+            {{ loading ? 'Salvando...' : 'Salvar escultura' }} <span aria-hidden="true">↗</span>
+          </button>
+        </form>
+      </section>
+
+      <section class="catalog-panel">
+        <div class="panel-heading panel-heading--list">
+          <div>
+            <p class="eyebrow">Publicadas</p>
+            <h2>Itens cadastrados <span>{{ products.length }}</span></h2>
+          </div>
+          <button class="refresh-button" type="button" (click)="loadProducts()" [disabled]="loadingProducts" aria-label="Atualizar lista">↻</button>
+        </div>
+
+        <p class="status-message" *ngIf="loadingProducts">Carregando catálogo...</p>
+        <p class="status-message status-message--error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p class="status-message" *ngIf="!loadingProducts && !errorMessage && products.length === 0">Nenhuma escultura cadastrada.</p>
+
+        <div class="product-list" *ngIf="!loadingProducts && products.length">
+          <article class="product-row" *ngFor="let product of products">
+            <img [src]="product.image" [alt]="product.reference" />
+            <div class="product-info">
+              <strong>{{ product.reference }}</strong>
+              <span>{{ product.type }} · R$ {{ product.price | number:'1.2-2' }}</span>
+            </div>
+            <button class="edit-button" type="button" (click)="openEdit(product)">Editar</button>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<div class="modal-backdrop" *ngIf="selectedProduct" (click)="closeEdit()">
+  <section class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-title" (click)="$event.stopPropagation()">
+    <button class="modal-close" type="button" (click)="closeEdit()" aria-label="Fechar edição">×</button>
+    <div class="modal-image-wrap">
+      <img [src]="selectedProduct.image" [alt]="selectedProduct.reference" />
+      <span *ngIf="editFile" class="new-image-label">Nova imagem selecionada</span>
+    </div>
+    <div class="modal-content">
+      <p class="eyebrow">Editar peça</p>
+      <h2 id="edit-title">{{ selectedProduct.reference }}</h2>
+      <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
+        <label>Referência<input type="text" formControlName="reference" /></label>
+        <div class="form-row">
+          <label>Preço (R$)<input type="number" formControlName="price" min="0" step="0.01" /></label>
+          <label>Categoria<select formControlName="type"><option *ngFor="let tipo of tiposEscultura" [value]="tipo">{{ tipo }}</option></select></label>
+        </div>
+        <label>Descrição<textarea formControlName="description" rows="3"></textarea></label>
+        <label class="file-field">Trocar imagem
+          <input type="file" accept="image/*" (change)="onEditFileSelected($event)" />
+          <span class="file-drop"><strong>Selecionar nova imagem</strong><small>{{ editFile?.name || 'Opcional' }}</small></span>
+        </label>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" (click)="closeEdit()">Cancelar</button>
+          <button class="primary-button" type="submit" [disabled]="savingEdit">{{ savingEdit ? 'Atualizando...' : 'Salvar alterações' }}</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
