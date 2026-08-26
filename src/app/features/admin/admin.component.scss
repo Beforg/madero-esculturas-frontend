@@ -26,6 +26,13 @@
 .panel-number { color: #a15e32; font: 700 1.4rem Georgia, serif; }
 .panel-heading h2 { margin: 0; font: 600 1.75rem/1 Georgia, serif; }
 .panel-heading h2 span { color: #a15e32; font: 500 1rem Arial, sans-serif; }
+.filter-form { display: grid; grid-template-columns: minmax(160px, 1.6fr) repeat(4, minmax(90px, 1fr)); gap: .6rem; align-items: end; margin-bottom: 1.2rem; padding-bottom: 1.2rem; border-bottom: 1px solid #eee6dc; }
+.filter-form label { font-size: .65rem; }
+.filter-form input, .filter-form select { padding: .65rem .6rem; font-size: .82rem; }
+.filter-actions { display: flex; gap: .35rem; align-items: center; }
+.filter-actions .primary-button { padding: .67rem .75rem; font-size: .67rem; }
+.clear-button { border: 0; padding: .5rem .35rem; color: #8b6b52; background: transparent; cursor: pointer; font: 700 .67rem Arial, sans-serif; text-transform: uppercase; }
+.clear-button:hover { color: #704024; text-decoration: underline; }
 form { display: grid; gap: 1rem; }
 label { display: grid; gap: .4rem; color: #55483e; font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 input, select, textarea { width: 100%; border: 1px solid #d9cec1; border-radius: 3px; padding: .8rem .85rem; color: #29231d; background: #fff; font: 400 .98rem/1.35 Arial, sans-serif; letter-spacing: 0; text-transform: none; outline: none; }
@@ -51,8 +58,12 @@ input:focus, select:focus, textarea:focus { border-color: #a15e32; box-shadow: 0
 .product-info span { overflow: hidden; color: #8b7d70; font: .72rem Arial, sans-serif; text-overflow: ellipsis; white-space: nowrap; }
 .edit-button { padding: .45rem .55rem; color: #704024; background: transparent; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .edit-button:hover { text-decoration: underline; }
+.product-actions { display: flex; align-items: center; gap: .35rem; }
+.delete-button { border: 0; padding: .45rem .55rem; color: #a33e31; background: transparent; cursor: pointer; font: 800 .7rem Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.delete-button:hover { color: #79251f; text-decoration: underline; }
 .status-message { color: #86786c; font-size: .9rem; }
 .status-message--error { color: #a33e31; }
+.admin-paginator { margin-top: .8rem; border-top: 1px solid #eee6dc; background: transparent; }
 .modal-backdrop { position: fixed; z-index: 10; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgba(32, 24, 18, .7); }
 .edit-modal { position: relative; display: grid; grid-template-columns: minmax(240px, .85fr) minmax(280px, 1fr); width: min(850px, 100%); max-height: min(720px, 94vh); overflow: auto; background: #fffdf9; box-shadow: 0 24px 70px rgba(0, 0, 0, .25); }
 .modal-image-wrap { position: relative; min-height: 320px; background: #211b17; }
@@ -79,9 +90,11 @@ input:focus, select:focus, textarea:focus { border-color: #a15e32; box-shadow: 0
 	.form-panel, .catalog-panel { padding: 1.1rem; }
 	.panel-heading { margin-bottom: 1.35rem; }
 	.panel-heading h2 { font-size: 1.45rem; }
+	.filter-form { grid-template-columns: 1fr 1fr; }
+	.filter-search { grid-column: 1 / -1; }
 	.product-row { grid-template-columns: 3rem minmax(0, 1fr) auto; gap: .5rem; }
 	.product-row img { width: 3rem; height: 3rem; }
-	.edit-button { padding-inline: .25rem; }
+	.edit-button, .delete-button { padding-inline: .25rem; }
 	.modal-backdrop { align-items: end; padding: 0; }
 	.edit-modal { width: 100%; max-height: 96svh; }
 	.modal-image-wrap, .modal-image-wrap img { min-height: 190px; height: 190px; }
@@ -89,10 +102,15 @@ input:focus, select:focus, textarea:focus { border-color: #a15e32; box-shadow: 0
 	.modal-content h2 { font-size: 1.7rem; }
 }
 @media (max-width: 380px) {
+	.filter-form { grid-template-columns: 1fr; }
+	.filter-search { grid-column: auto; }
+	.filter-actions { justify-content: space-between; }
+	.filter-actions .primary-button { flex: 1; }
 	.form-row { grid-template-columns: 1fr; }
 	.product-row { grid-template-columns: 2.75rem minmax(0, 1fr); }
 	.product-row img { width: 2.75rem; height: 2.75rem; }
-	.edit-button { grid-column: 2; justify-self: start; padding: .25rem 0; }
+	.product-actions { grid-column: 2; justify-self: start; }
+	.edit-button, .delete-button { padding: .25rem 0; }
 	.modal-actions { flex-direction: column-reverse; }
 	.modal-actions button { width: 100%; }
 }

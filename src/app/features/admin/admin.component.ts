@@ -5,17 +5,23 @@ import { Product, TipoEscultura } from '../../shared/models/product.model';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-admin',
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, MatPaginatorModule],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
 })
 export class AdminComponent implements OnInit {
   productForm: FormGroup;
   editForm: FormGroup;
+  filterForm: FormGroup;
   products: Product[] = [];
+  totalProducts = 0;
+  pageIndex = 0;
+  pageSize = 12;
+  readonly pageSizeOptions = [8, 12, 24, 48];
   selectedProduct: Product | null = null;
   selectedFile: File | null = null;
   editFile: File | null = null;
@@ -35,14 +41,24 @@ export class AdminComponent implements OnInit {
       reference: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
       description: ['', Validators.required],
-      type: [TipoEscultura.Bovino, Validators.required] 
+      type: [TipoEscultura.Bovino, Validators.required],
+      pelagem: [''] 
     });
 
     this.editForm = this.fb.group({
       reference: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
       description: ['', Validators.required],
-      type: [TipoEscultura.Bovino, Validators.required]
+      type: [TipoEscultura.Bovino, Validators.required],
+      pelagem: [''] 
+    });
+
+    this.filterForm = this.fb.group({
+      search: [''],
+      type: [''],
+      pelagem: [''],
+      minPrice: [null, Validators.min(0)],
+      maxPrice: [null, Validators.min(0)]
     });
   }
 
@@ -50,18 +66,52 @@ export class AdminComponent implements OnInit {
     this.loadProducts();
   }
 
-  async loadProducts(): Promise<void> {
+  async loadProducts(page = this.pageIndex + 1, pageSize = this.pageSize): Promise<void> {
     this.loadingProducts = true;
     this.errorMessage = '';
 
     try {
-      const response = await this.supabaseService.getProducts({ page: 1, pageSize: 1000 });
+      const filters = this.filterForm.value;
+      const response = await this.supabaseService.getProducts({
+        page,
+        pageSize,
+        search: filters.search || null,
+        type: filters.type || null,
+        pelagem: filters.pelagem || null,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice
+      });
       this.products = response.items;
+      this.totalProducts = response.total;
+      this.pageIndex = Math.max(response.page - 1, 0);
+      this.pageSize = response.pageSize;
     } catch (error: any) {
       this.errorMessage = error.message || 'Não foi possível carregar o catálogo.';
     } finally {
       this.loadingProducts = false;
     }
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadProducts(this.pageIndex + 1, this.pageSize);
+  }
+
+  applyFilters(): void {
+    if (this.filterForm.invalid) {
+      this.filterForm.markAllAsTouched();
+      return;
+    }
+
+    this.pageIndex = 0;
+    this.loadProducts(1, this.pageSize);
+  }
+
+  clearFilters(): void {
+    this.filterForm.reset({ search: '', type: '', pelagem: '', minPrice: null, maxPrice: null });
+    this.pageIndex = 0;
+    this.loadProducts(1, this.pageSize);
   }
 
   onFileSelected(event: Event): void {
@@ -97,7 +147,9 @@ export class AdminComponent implements OnInit {
         price: this.productForm.value.price,
         description: this.productForm.value.description,
         type: this.productForm.value.type,
+        pelagem: this.productForm.value.pelagem || null,
         image: imageUrl
+        
       };
 
       const { error } = await this.supabaseService.createProduct(newProduct);
@@ -123,7 +175,8 @@ export class AdminComponent implements OnInit {
       reference: product.reference,
       price: product.price,
       description: product.description,
-      type: product.type
+      type: product.type,
+      pelagem: product.pelagem || ''
     });
   }
 
@@ -162,6 +215,22 @@ export class AdminComponent implements OnInit {
       alert('Erro ao atualizar: ' + error.message);
     } finally {
       this.savingEdit = false;
+    }
+  }
+
+  async deleteProduct(product: Product): Promise<void> {
+    const confirmed = confirm(`Deseja excluir a escultura "${product.reference}"? Esta ação não pode ser desfeita.`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await this.supabaseService.deleteProduct(product);
+      this.products = this.products.filter((item) => item.id !== product.id);
+      alert('Escultura excluída com sucesso!');
+    } catch (error: any) {
+      alert('Erro ao excluir: ' + error.message);
     }
   }
 

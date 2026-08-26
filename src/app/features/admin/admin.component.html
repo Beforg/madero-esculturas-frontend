@@ -40,6 +40,9 @@
               </select>
             </label>
           </div>
+          <label>Pelagem
+            <input type="text" formControlName="pelagem" placeholder="Ex.: Castanha" />
+          </label>
           <label>Descrição
             <textarea formControlName="description" rows="4" placeholder="Conte um pouco sobre esta peça..."></textarea>
           </label>
@@ -62,6 +65,31 @@
           <button class="refresh-button" type="button" (click)="loadProducts()" [disabled]="loadingProducts" aria-label="Atualizar lista">↻</button>
         </div>
 
+        <form class="filter-form" [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+          <label class="filter-search">Buscar
+            <input type="search" formControlName="search" placeholder="Referência ou descrição" />
+          </label>
+          <label>Categoria
+            <select formControlName="type">
+              <option value="">Todas</option>
+              <option *ngFor="let tipo of tiposEscultura" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </label>
+          <label>Pelagem
+            <input type="text" formControlName="pelagem" placeholder="Ex.: Castanha" />
+          </label>
+          <label>Preço mínimo
+            <input type="number" formControlName="minPrice" min="0" step="0.01" placeholder="R$ 0" />
+          </label>
+          <label>Preço máximo
+            <input type="number" formControlName="maxPrice" min="0" step="0.01" placeholder="Sem limite" />
+          </label>
+          <div class="filter-actions">
+            <button class="primary-button" type="submit">Filtrar</button>
+            <button class="clear-button" type="button" (click)="clearFilters()">Limpar</button>
+          </div>
+        </form>
+
         <p class="status-message" *ngIf="loadingProducts">Carregando catálogo...</p>
         <p class="status-message status-message--error" *ngIf="errorMessage">{{ errorMessage }}</p>
         <p class="status-message" *ngIf="!loadingProducts && !errorMessage && products.length === 0">Nenhuma escultura cadastrada.</p>
@@ -71,11 +99,26 @@
             <img [src]="product.image" [alt]="product.reference" />
             <div class="product-info">
               <strong>{{ product.reference }}</strong>
-              <span>{{ product.type }} · R$ {{ product.price | number:'1.2-2' }}</span>
+              <span>{{ product.type }}<ng-container *ngIf="product.pelagem"> · {{ product.pelagem }}</ng-container> · R$ {{ product.price | number:'1.2-2' }}</span>
             </div>
-            <button class="edit-button" type="button" (click)="openEdit(product)">Editar</button>
+            <div class="product-actions">
+              <button class="edit-button" type="button" (click)="openEdit(product)">Editar</button>
+              <button class="delete-button" type="button" (click)="deleteProduct(product)" [attr.aria-label]="'Excluir ' + product.reference">Excluir</button>
+            </div>
           </article>
         </div>
+
+        <mat-paginator
+          *ngIf="!loadingProducts && totalProducts > 0"
+          class="admin-paginator"
+          [length]="totalProducts"
+          [pageSize]="pageSize"
+          [pageIndex]="pageIndex"
+          [pageSizeOptions]="pageSizeOptions"
+          [showFirstLastButtons]="true"
+          aria-label="Paginação dos itens cadastrados"
+          (page)="onPageChange($event)"
+        />
       </section>
     </div>
   </div>
@@ -97,6 +140,7 @@
           <label>Preço (R$)<input type="number" formControlName="price" min="0" step="0.01" /></label>
           <label>Categoria<select formControlName="type"><option *ngFor="let tipo of tiposEscultura" [value]="tipo">{{ tipo }}</option></select></label>
         </div>
+        <label>Pelagem<input type="text" formControlName="pelagem" placeholder="Ex.: Castanha" /></label>
         <label>Descrição<textarea formControlName="description" rows="3"></textarea></label>
         <label class="file-field">Trocar imagem
           <input type="file" accept="image/*" (change)="onEditFileSelected($event)" />

@@ -34,6 +34,7 @@
   <div class="card__body">
     <p class="card__eyebrow">REF: {{ product.reference }}</p>
     <h3 class="card__title">{{ product.description || ('REF: ' + product.reference) }}</h3>
+    <p class="card__coat" *ngIf="product.pelagem">Pelagem: {{ product.pelagem }}</p>
     <div class="card__price">
       <span class="card__price-value">{{ product.price | currency:'BRL':'symbol':'1.2-2' }}</span>
       <!-- <span class="card__price-suffix">no pix</span> -->

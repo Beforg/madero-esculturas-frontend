@@ -58,8 +58,30 @@ export class SupabaseService {
     return await this.supabase.from('produtos').update(productData).eq('id', id);
   }
 
+  async deleteProduct(product: Product) {
+    const { error: productError } = await this.supabase
+      .from('produtos')
+      .delete()
+      .eq('id', product.id);
+
+    if (productError) throw productError;
+
+    const imagePath = this.getStoragePath(product.image);
+    if (imagePath) {
+      const { error: imageError } = await this.supabase.storage
+        .from('esculturas')
+        .remove([imagePath]);
+
+      if (imageError) {
+        console.warn('Produto excluído, mas a imagem não pôde ser removida:', imageError);
+      }
+    }
+
+    return { error: null };
+  }
+
   async getProducts(params: ProductQueryParams): Promise<ProductListResponse> {
-    const { page, pageSize, type } = params;
+    const { page, pageSize, type, search, pelagem, minPrice, maxPrice } = params;
     
     // Cálculo de paginação do PostgreSQL (ex: página 1 com 10 itens = index 0 a 9)
     const from = (page - 1) * pageSize;
@@ -73,6 +95,23 @@ export class SupabaseService {
     // Se o usuário selecionou uma categoria (Ovino, Equino, etc), aplica o filtro
     if (type) {
       query = query.eq('type', type);
+    }
+
+    if (search?.trim()) {
+      const term = search.trim().replace(/,/g, '');
+      query = query.or(`reference.ilike.%${term}%,description.ilike.%${term}%`);
+    }
+
+    if (pelagem?.trim()) {
+      query = query.ilike('pelagem', `%${pelagem.trim()}%`);
+    }
+
+    if (minPrice !== null && minPrice !== undefined) {
+      query = query.gte('price', minPrice);
+    }
+
+    if (maxPrice !== null && maxPrice !== undefined) {
+      query = query.lte('price', maxPrice);
     }
 
     // Aplica a paginação
@@ -126,5 +165,16 @@ export class SupabaseService {
       page,
       pageSize
     };
+  }
+
+  private getStoragePath(imageUrl: string): string | null {
+    const marker = '/storage/v1/object/public/esculturas/';
+    const markerIndex = imageUrl.indexOf(marker);
+
+    if (markerIndex === -1) {
+      return null;
+    }
+
+    return decodeURIComponent(imageUrl.slice(markerIndex + marker.length));
   }
 }
