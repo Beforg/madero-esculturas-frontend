@@ -98,13 +98,13 @@
   align-content: start;
 }
 
-.card__eyebrow {
+.card__reference {
   margin: 0;
-  font-size: 0.62rem;
-  font-weight: 700;
+  font-size: 0.86rem;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #7a6f69;
+  color: #2e2622;
 }
 
 .card__title {
@@ -121,7 +121,7 @@
 .card__coat {
   margin: 0;
   color: #7a6f69;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   line-height: 1.25;
 }
 
@@ -136,6 +136,10 @@
   font-size: 0.98rem;
   font-weight: 700;
   color: #1f1a17;
+}
+
+.card__price-value.is-consult-price {
+  font-size: 0.76rem;
 }
 
 .card__price-suffix {
@@ -194,7 +198,7 @@
     padding: 0.7rem 0.7rem 0.85rem;
   }
 
-  .card__title {
+  .card__reference {
     font-size: 0.78rem;
   }
 

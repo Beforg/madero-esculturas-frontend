@@ -10,6 +10,14 @@
 
     <div class="product-preview__content">
       <p class="product-preview__reference">REF: {{ product.reference }}</p>
+      <p class="product-preview__coat" *ngIf="product.pelagem">Pelagem: {{ product.pelagem }}</p>
+      <p class="product-preview__price">
+        <ng-container *ngIf="product.price > 0; else consultPrice">
+          {{ product.price | currency:'BRL':'symbol':'1.2-2' }}
+        </ng-container>
+        <ng-template #consultPrice>Consultar preço com vendedor</ng-template>
+      </p>
+      <p class="product-preview__description" *ngIf="product.description">{{ product.description }}</p>
 
       <button class="btn-primary product-preview__button" type="button" (click)="addToCart()">
         Adicionar ao carrinho

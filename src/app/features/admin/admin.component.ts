@@ -40,7 +40,7 @@ export class AdminComponent implements OnInit {
     this.productForm = this.fb.group({
       reference: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
-      description: ['', Validators.required],
+      description: [''],
       type: [TipoEscultura.Bovino, Validators.required],
       pelagem: [''] 
     });
@@ -48,7 +48,7 @@ export class AdminComponent implements OnInit {
     this.editForm = this.fb.group({
       reference: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
-      description: ['', Validators.required],
+      description: [''],
       type: [TipoEscultura.Bovino, Validators.required],
       pelagem: [''] 
     });
