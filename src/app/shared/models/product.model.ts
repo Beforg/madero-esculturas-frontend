@@ -5,6 +5,7 @@ export interface Product {
   image: string;
   description: string;
   type: TipoEscultura;
+  pelagem?: string;
 }
 
 export enum TipoEscultura {
@@ -18,6 +19,10 @@ export interface ProductQueryParams {
   page: number;
   pageSize: number;
   type?: TipoEscultura | null;
+  search?: string | null;
+  pelagem?: string | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
 }
 
 export interface ProductListResponse {

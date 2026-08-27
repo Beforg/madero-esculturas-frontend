@@ -1,0 +1,15 @@
+<main class="login-page">
+  <section class="login-card">
+    <div class="login-copy">
+      <p class="eyebrow">Área reservada</p>
+      <h1>Bem-vindo de volta.</h1>
+      <p>Gerenciamento</p>
+    </div>
+    <form (ngSubmit)="handleLogin()">
+      <label>E-mail<input type="email" name="email" [(ngModel)]="email" placeholder="seu@email.com" required /></label>
+      <label>Senha<input type="password" name="password" [(ngModel)]="password" placeholder="Sua senha" required /></label>
+      <button class="login-button" type="submit" [disabled]="loading">{{ loading ? 'Entrando...' : 'Entrar no painel' }} <span aria-hidden="true">↗</span></button>
+    </form>
+    <a class="return-link" routerLink="/">← Voltar para o site</a>
+  </section>
+</main>

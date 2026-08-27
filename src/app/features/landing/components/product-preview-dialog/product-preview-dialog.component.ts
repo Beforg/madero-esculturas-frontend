@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
@@ -11,7 +11,7 @@ export interface ProductPreviewDialogResult {
 @Component({
   selector: 'app-product-preview-dialog',
   standalone: true,
-  imports: [MatDialogModule],
+  imports: [CommonModule, MatDialogModule],
   templateUrl: './product-preview-dialog.component.html',
   styleUrl: './product-preview-dialog.component.scss'
 })

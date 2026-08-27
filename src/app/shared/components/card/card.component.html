@@ -32,12 +32,17 @@
   </div>
 
   <div class="card__body">
-    <p class="card__eyebrow">REF: {{ product.reference }}</p>
-    <!-- <h3 class="card__title">{{ product.description || ('REF: ' + product.reference) }}</h3> -->
+    <h3 class="card__reference">REF: {{ product.reference }}</h3>
+    <p class="card__coat" *ngIf="product.pelagem">Pelagem: {{ product.pelagem }}</p>
     <div class="card__price">
-      <!-- <span class="card__price-value">{{ product.price | currency:'BRL':'symbol':'1.2-2' }}</span> -->
-      <!-- <span class="card__price-suffix">no pix</span> -->
+      <span class="card__price-value" [class.is-consult-price]="product.price === 0">
+        <ng-container *ngIf="product.price > 0; else consultPrice">
+          {{ product.price | currency:'BRL':'symbol':'1.2-2' }}
+        </ng-container>
+        <ng-template #consultPrice>Consultar preço com vendedor</ng-template>
+      </span>
     </div>
+    <!-- <p class="card__title" *ngIf="product.description">{{ product.description }}</p> -->
     <button class="card__button" type="button" (click)="onAddToCart($event)">
       Adicionar
     </button>
